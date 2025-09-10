@@ -55,7 +55,7 @@ def create():
     project_lists = db.executesql(sql, as_dict=True)
     
     sql = """
-    SELECT * from u_task_group where cid="TCL"
+    SELECT * from u_task_group
     """
     task_groups = db.executesql(sql, as_dict=True)
     return locals()
@@ -103,8 +103,8 @@ def submit():
     group=str(group_id).split('||')
     group_id=str(group[0])
     group_name=str(group[1])
-    
-    old_task=db((db.u_tasks.task_name==str(task_name))).select()
+
+    old_task=db((db.u_tasks.task_name==str(task_name)) & (db.u_tasks.cid==str(cid)) & (db.u_tasks.pid==str(project_name))).select()
     if len(old_task) > 0:
         session.flash = {"msg_type":"error","msg":"Task Name is Duplicate"}
         redirect (URL('task_list','create'))
@@ -151,7 +151,7 @@ def edit():
         project_lists = db.executesql(sql, as_dict=True)
 
         sql = """
-        SELECT * from u_task_group where cid="TCL"
+        SELECT * from u_task_group
         """
         task_groups = db.executesql(sql, as_dict=True)
         return dict(tasks=tasks,task_groups=task_groups,business_units=business_units, project_lists=project_lists)
@@ -203,8 +203,8 @@ def update():
     group=str(group_id).split('||')
     group_id=str(group[0])
     group_name=str(group[1])
-    
-    old_task=db((db.u_tasks.task_name==str(task_name)) & (db.u_tasks.id!=request.args(0))).select()
+
+    old_task=db((db.u_tasks.task_name==str(task_name)) & (db.u_tasks.cid==str(cid)) & (db.u_tasks.pid==str(project_name)) & (db.u_tasks.id!=request.args(0))).select()
     if len(old_task) > 0:
         session.flash = {"msg_type":"error","msg":"Task Name is Duplicate"}
         redirect (URL('task_list','edit',args=request.args(0)))

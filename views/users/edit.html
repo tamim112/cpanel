@@ -126,7 +126,7 @@
 						<select class="form-select form-select-solid" name="user_role" data-control="select2" data-placeholder="user role">
 						<option></option>
 						{{for user_role in user_roles:}}
-						<option value="{{=user_role['id']}}||{{=user_role['role_name']}}" {{if str(user_role['role_name']) == str(user_data.user_role):}} selected {{pass}}>{{=user_role['role_name']}}</option>  
+						<option value="{{=user_role['id']}}||{{=user_role['role_name']}}" {{if str(user_role['role_name']) == str(user_data.user_role):}} selected {{pass}}>{{=user_role['cid']}} | {{=user_role['pid']}} | {{=user_role['role_name']}}</option>  
 						{{pass}}
 						</select>
 					</div>
@@ -140,7 +140,7 @@
 				
 				<div class="col-6">
 					<div class="mb-10">
-					<label for="location" class="required form-label">Location</label>
+					<label for="location" class="form-label">Location</label>
 					<input type="text" name="location" class="form-control form-control-solid" value="{{=user_data.location}}" placeholder="location"/>
 					</div>
 				</div>

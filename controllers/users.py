@@ -73,15 +73,8 @@ def create():
         session.flash = {"msg_type":"error","msg":"Access is Denied !"}
         redirect (URL('default','index'))
     
-    if session.user_role in ['management','unit_management']:
-       return "Access Denied"
     
     
-    conditions = ''
-
-    if session.user_role in ['unit_system_admin','unit_management']:
-       conditions += " and cid = '{}'".format(session.cid)
-       
     sql = """
     SELECT * from business_units
     """
@@ -94,6 +87,12 @@ def create():
     SELECT * from projects
     """
     project_lists = db.executesql(sql, as_dict=True)
+    
+    sql= """
+    SELECT distinct user_type from users
+    """
+    user_types = db.executesql(sql, as_dict=True)
+    
     return locals()
 
 
@@ -114,6 +113,7 @@ def submit():
         user_id='1001'
     else:
         user_id=int(user_id)+1
+        
     try:
         uploaded_image = request.vars.image_path.file
 
@@ -160,6 +160,9 @@ def submit():
     location = str(request.vars.location)
     passwordStr=str(request.vars.password)
     project_name = str(request.vars.project_name)
+    user_type = str(request.vars.user_type).lower()
+    remarks = str(request.vars.remarks)
+    username = str(request.vars.username)
     if request.vars.status is not None:
         status = str(request.vars.status)
     else:
@@ -180,16 +183,20 @@ def submit():
         errors.append('User is duplicate.')
     if not email:
         errors.append('Email is required.')
-    elif len(db(db.users.email == email).select()) >0:
+    elif len(db((db.users.email == email ) & (db.users.cid == cid)  & (db.users.pid == project_name)).select()) >0:
         errors.append('Email is duplicate.')
     if not mobile:
         errors.append('Mobile is required.')
-    elif len(db(db.users.mobile == mobile).select()) >0:
+    elif len(db((db.users.mobile == mobile) & (db.users.cid == cid)  & (db.users.pid == project_name)).select()) >0:
         errors.append('Mobile is duplicate.')
     if not passwordStr:
         errors.append('Password is required.')
-    if not location:
-        errors.append('Location is required.')
+    # if not location:
+    #     errors.append('Location is required.')
+    if not user_type:
+        errors.append('User Type is required.')
+    if not username:
+        errors.append('Username is required.')
 
     # validation errors generate
     if errors:
@@ -213,6 +220,7 @@ def submit():
                 first_name = first_name,
                 last_name = last_name,
                 full_name = full_name,
+                username = username,
                 email = email,
                 password = password,
                 mobile = mobile,
@@ -221,7 +229,9 @@ def submit():
                 image_path = image_path,
                 status = status,
                 role_id = role_id,
-                user_role = user_role
+                user_role = user_role,
+                user_type = user_type,
+                note = remarks,
                 )
     #user log entry
     task_name='User'
@@ -240,21 +250,7 @@ def edit():
     if ((access_permission==False) and (access_permission_alt==False)):
         session.flash = {"msg_type":"error","msg":"Access is Denied !"}
         redirect (URL('default','index'))
-    # if session.status=="" or session.status==None:
-    #     redirect(URL(c='login',f='index'))
-
-    # if session.user_role in ['management','unit_management']:
-    #    return "Access Denied"
     
-    if request.args(0):
-        user_data=db(db.users.id==request.args(0)).select().first()
-        if session.user_role in ['unit_system_admin'] and user_data.cid != session.cid:
-            return "Access Denied"
-
-        conditions = ''
-
-        if session.user_role in ['unit_system_admin','unit_management']:
-            conditions += " and cid = '{}'".format(session.cid)
                 
         sql = """
         SELECT * from business_units
@@ -269,8 +265,13 @@ def edit():
         SELECT * from projects  
         """
         project_lists = db.executesql(sql, as_dict=True)
+        
+        sql= """
+        SELECT distinct user_type from users
+        """
+        user_types = db.executesql(sql, as_dict=True)
 
-        return dict(user_data=user_data,business_units=business_units,user_roles=user_roles,project_lists=project_lists)
+        return dict(user_data=user_data,business_units=business_units,user_roles=user_roles,project_lists=project_lists,user_types=user_types)
 
 def update():
     task_id='user_create'
@@ -330,12 +331,15 @@ def update():
     location = str(request.vars.location)
     passwordStr=str(request.vars.password)
     project_name = str(request.vars.project_name)
+    user_type = str(request.vars.user_type).lower()
+    remarks = str(request.vars.remarks)
+    username = str(request.vars.username)
+    
     if request.vars.status is not None:
         status = str(request.vars.status)
     else:
         status = "0"
         
-    u_id = request.args(0)
 
     # validation
     
@@ -353,16 +357,16 @@ def update():
         errors.append('User is duplicate.')
     if not email:
         errors.append('Email is required.')
-    elif len(db((db.users.email == email) & (db.users.id != user_data.id)).select()) >0:
+    elif len(db((db.users.email == email) & (db.users.cid == cid)  & (db.users.pid == project_name) & (db.users.id != user_data.id)).select()) >0:
         errors.append('Email is duplicate.')
     if not mobile:
         errors.append('Mobile is required.')
-    elif len(db((db.users.mobile == mobile) & (db.users.id != user_data.id)).select()) >0:
+    elif len(db((db.users.mobile == mobile) & (db.users.cid == cid)  & (db.users.pid == project_name) & (db.users.id != user_data.id)).select()) >0:
         errors.append('Mobile is duplicate.')
     if not passwordStr:
         errors.append('Password is required.')
-    if not location:
-        errors.append('Location is required.')
+    # if not location:
+    #     errors.append('Location is required.')
         
     # validation errors generate
     if errors:
@@ -396,6 +400,8 @@ def update():
                         status = status,
                         role_id = role_id,
                         user_role = user_role,
+                        username=username,
+                        user_type = user_type
                         )
     #user log entry
     task_name='User'
@@ -411,10 +417,7 @@ def delete():
     if ((access_permission==False)):
         session.flash = {"msg_type":"error","msg":"Access is Denied !"}
         redirect (URL('default','index'))
-    # if session.status=="" or session.status==None:
-    #     redirect(URL(c='login',f='index'))
-    # if session.user_role in ['management','unit_management','unit_system_admin']:
-    #     return "Access Denied"
+
     
     if request.args(0):
         if len(db((db.users.id == request.args(0)) & (db.users.user_id == '1001')).select())>0:

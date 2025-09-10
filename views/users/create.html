@@ -98,11 +98,10 @@
 						<input type="text" name="last_name" class="form-control form-control-solid" placeholder="last name"/>
 					</div>
 				</div>
-
 				<div class="col-6">
 					<div class="mb-10">
-						<label for="email" class="required form-label">Email</label>
-						<input type="email" name="email" class="form-control form-control-solid" placeholder="email"/>
+						<label for="username" class="required form-label">Username</label>
+						<input type="text" name="username" class="form-control form-control-solid" placeholder="username"/>
 					</div>
 				</div>		
 				<div class="col-6">
@@ -111,27 +110,53 @@
 						<input type="password" name="password" class="form-control form-control-solid" placeholder="password"/>
 					</div>
 				</div>
+
+				<div class="col-6">
+					<div class="mb-10">
+						<label for="email" class="required form-label">Email</label>
+						<input type="email" name="email" class="form-control form-control-solid" placeholder="email"/>
+					</div>
+				</div>	
+				<div class="col-6">
+					<div class="mb-10">
+						<label for="mobile" class="required form-label">Mobile</label>
+						<input type="text" name="mobile" class="form-control form-control-solid" placeholder="mobile"/>
+					</div>
+				</div>	
+				
 				<div class="col-6">
 					<div class="mb-10">
 						<label for="user_role" class="required form-label">User Role</label>
 						<select class="form-select form-select-solid" name="user_role" data-control="select2" data-placeholder="user role">
 						<option></option>
 						{{for user_role in user_roles:}}
-						<option value="{{=user_role['id']}}||{{=user_role['role_name']}}" {{if str(user_role['role_name']) == str(request.vars.user_role):}} selected {{pass}}>{{=user_role['role_name']}}</option>  
+						<option value="{{=user_role['id']}}||{{=user_role['role_name']}}" {{if str(user_role['role_name']) == str(request.vars.user_role):}} selected {{pass}}>{{=user_role['cid']}} | {{=user_role['pid']}} | {{=user_role['role_name']}}</option>  
 						{{pass}}
 						</select>
 					</div>
 				</div>
 				<div class="col-6">
 					<div class="mb-10">
-						<label for="mobile" class="required form-label">Mobile</label>
-						<input type="text" name="mobile" class="form-control form-control-solid" placeholder="mobile"/>
+						<label for="user_type" class="required form-label">User type</label>
+						<select class="form-select form-select-solid" name="user_type" data-control="select2" id="user_type" data-placeholder="user type">
+						<option></option>
+						{{for types in user_types:}}
+						<option value="{{=types['user_type']}}" {{if str(types['user_type']) == str(request.vars.user_type):}} selected {{pass}}>{{=types['user_type']}}</option>  
+						{{pass}}
+						</select>
+					</div>
+				</div>
+				
+				<div class="col-6">
+					<div class="mb-10">
+					<label for="location" class="form-label">Location</label>
+					<input type="text" name="location" class="form-control form-control-solid" placeholder="location"/>
 					</div>
 				</div>
 				<div class="col-6">
 					<div class="mb-10">
-					<label for="location" class="required form-label">Location</label>
-					<input type="text" name="location" class="form-control form-control-solid" placeholder="location"/>
+					<label for="remarks" class="form-label">Remarks</label>
+					<input type="text" name="remarks" class="form-control form-control-solid" placeholder="remarks"/>
 					</div>
 				</div>
 				
@@ -238,7 +263,12 @@
 
 {{block script}}
 <script>
-	$(".kt_datepicker_flat").flatpickr();
+$(document).ready(function(){
+	$('#user_type').select2({
+		placeholder: "Select a user type",
+		tags:true
+	});
+});
 	
 </script>
 {{end}}

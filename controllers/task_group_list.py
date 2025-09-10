@@ -12,7 +12,7 @@ def index():
         isSearch = True
     
     sql = """
-    SELECT * from business_units where sbu_name="TCL"
+    SELECT * from business_units
     """
     business_units = db.executesql(sql, as_dict=True) 
     
@@ -86,8 +86,8 @@ def submit():
     
     group_name=str(group_name).lower()
     group_name=str(group_name).replace(' ','_')
-    
-    old_group=db((db.u_task_group.group_name==str(group_name))).select()
+
+    old_group=db((db.u_task_group.group_name==str(group_name)) & (db.u_task_group.cid==str(cid)) & (db.u_task_group.pid==str(project_name))).select()
     if len(old_group) > 0:
         session.flash = {"msg_type":"error","msg":"Group Name is Duplicate"}
         redirect (URL('task_group_list','create'))
@@ -168,8 +168,8 @@ def update():
     task_groups=db(db.u_task_group.id==request.args(0)).select().first()
     group_name=str(group_name).lower()
     group_name=str(group_name).replace(' ','_')
-        
-    old_task_group=db((db.u_task_group.group_name==str(group_name)) & (db.u_task_group.id!=request.args(0))).select()
+
+    old_task_group=db((db.u_task_group.group_name==str(group_name)) & (db.u_task_group.cid==str(cid)) & (db.u_task_group.pid==str(project_name)) & (db.u_task_group.id!=request.args(0))).select()
     if len(old_task_group) > 0:
         session.flash = {"msg_type":"error","msg":"Group Name is Duplicate"}
         redirect (URL('task_group_list','edit',args=request.args(0)))

@@ -83,8 +83,8 @@ def submit():
     
     role_name=str(role_name).lower()
     role_name=role_name.replace(" ","_")
-    
-    old_role=db((db.u_roles.role_name==str(role_name))).select()
+
+    old_role=db((db.u_roles.role_name==str(role_name)) & (db.u_roles.cid==str(cid)) & (db.u_roles.pid==str(project_name))).select()
     if len(old_role) > 0:
         session.flash = {"msg_type":"error","msg":"Role is Duplicate"}
         redirect (URL('role_list','create'))
@@ -115,7 +115,7 @@ def edit():
         roles=db(db.u_roles.id==request.args(0)).select().first()
         
         sql = """
-        SELECT * from business_units where sbu_name="TCL"
+        SELECT * from business_units
         """
         business_units = db.executesql(sql, as_dict=True)
         
@@ -162,8 +162,8 @@ def update():
     
     role_name=str(role_name).lower()
     role_name=role_name.replace(" ","_")
-    
-    old_role=db((db.u_roles.role_name==str(role_name)) & (db.u_roles.id!=request.args(0))).select()
+
+    old_role=db((db.u_roles.role_name==str(role_name)) & (db.u_roles.cid==str(cid)) & (db.u_roles.pid==str(project_name)) & (db.u_roles.id!=request.args(0))).select()
     if len(old_role) > 0:
         session.flash = {"msg_type":"error","msg":"Role is Duplicate"}
         redirect (URL('role_list','edit',args=request.args(0)))
@@ -264,13 +264,14 @@ def role_has_task():
         redirect (URL('default','index'))
     
     sql = """
-    SELECT * from business_units
+    SELECT * from business_units 
     """
     business_units = db.executesql(sql, as_dict=True)
+    
     if request.args(0):        
         roles=db(db.u_roles.id==request.args(0)).select().first()
-        
-        tasks=db(db.u_tasks.status==1).select(orderby=db.u_tasks.task_name)
+
+        tasks=db((db.u_tasks.status==1) & (db.u_tasks.cid==roles.cid) & (db.u_tasks.pid==roles.pid)).select(orderby=db.u_tasks.task_name)
         fin_task_list=[]
         group_list=[]
         for rRow in range(len(tasks)):
@@ -292,6 +293,7 @@ def role_has_task():
             
             finDict={'group_name':str(group_list[i]),'task_list':task_list}
             fin_task_list.append(finDict)
+        
         #selected task
         role_tasks=db(db.u_role_has_tasks.role_id==request.args(0)).select()        
         role_task_list=[]
@@ -328,36 +330,41 @@ def role_has_task_submit():
         redirect (URL('role_list','role_has_task',args=request.args(0)))
         
     # validation end
-    if 'task_ids[]' not in request.vars or request.vars['task_ids[]'] == "":
-        session.flash = {"msg_type":"error","msg":"Task are required"}
-        redirect (URL('role_list','role_has_task',args=request.args(0)))
     
-    task_ids = request.vars.getlist('task_ids[]')
+    if request.vars['task_ids[]'] is not None:
+        if 'task_ids[]' not in request.vars or request.vars['task_ids[]'] == "":
+            session.flash = {"msg_type":"error","msg":"Task are required"}
+            redirect (URL('role_list','role_has_task',args=request.args(0)))
     
-    role_task_list=[]
-    task_id=''
-    task_name=''
-    for index in range(len(task_ids)):  
-        full_task=str(task_ids[index]).split('||')
-        task_id=str(full_task[0])       
-        task_name=str(full_task[1])       
-        role_task_list.append({
-            'cid':str(cid),
-            'role_id':str(role_id),
-            'role_name':str(role_name),            
-            'task_id': str(task_id),
-            'task_name': str(task_name)
-        })
-    
-    
-    db(db.u_role_has_tasks.role_id==str(role_id)).delete()
-    
-    db.u_role_has_tasks.bulk_insert(role_task_list)
-    db.commit()
-    
+        task_ids = request.vars.getlist('task_ids[]')
+        
+        if len(task_ids) > 0:
+            role_task_list=[]
+            task_id=''
+            task_name=''
+            for index in range(len(task_ids)):  
+                full_task=str(task_ids[index]).split('||')
+                task_id=str(full_task[0])       
+                task_name=str(full_task[1])       
+                role_task_list.append({
+                    'cid':str(cid),
+                    'role_id':str(role_id),
+                    'role_name':str(role_name),            
+                    'task_id': str(task_id),
+                    'task_name': str(task_name)
+                })
+            
+            
+            db(db.u_role_has_tasks.role_id==str(role_id)).delete()
+            
+            db.u_role_has_tasks.bulk_insert(role_task_list)
+            db.commit()
+    else:
+        db(db.u_role_has_tasks.role_id==str(role_id)).delete()
+        db.commit()
+        
     #user log entry
     task_name='Role Has List'
     activity='Create'
     # user_log(task_name,activity)    
     return  dict(redirect(URL('role_list','index')))
- 

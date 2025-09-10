@@ -14,7 +14,7 @@ def index():
         isSearch = True
     
     sql = """
-    SELECT * from business_units where sbu_name="TCL"
+    SELECT * from business_units
     """
     business_units = db.executesql(sql, as_dict=True) 
     
@@ -75,8 +75,8 @@ def submit():
     project_name=str(project_name).lower()
     project_name=str(project_name).replace(' ','_')
 
-    
-    old_project=db((db.projects.project_name==str(project_name))).select()
+
+    old_project=db((db.projects.project_name==str(project_name)) & (db.projects.cid==str(cid))).select()
     if len(old_project) > 0:
         session.flash = {"msg_type":"error","msg":"Project Name is Duplicate"}
         redirect (URL('project_list','create'))
@@ -148,7 +148,7 @@ def update():
 
     project_name=str(project_name).lower()
     project_name=str(project_name).replace(' ','_')
-    old_project=db((db.projects.project_name==str(project_name)) & (db.projects.id!=request.args(0))).select()
+    old_project=db((db.projects.project_name==str(project_name)) & (db.projects.cid==str(cid)) & (db.projects.id!=request.args(0))).select()
 
     if len(old_project) > 0:
         session.flash = {"msg_type":"error","msg":"Project Name is Duplicate"}
