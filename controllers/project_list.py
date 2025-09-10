@@ -83,6 +83,7 @@ def submit():
         
     db.projects.insert(
             cid=str(cid),
+            project_id=str(project_name),
             project_name=str(project_name),
             project_description=str(project_description),
             status=str(status),
@@ -156,6 +157,7 @@ def update():
 
     projects.update_record(
         cid=str(cid),
+        project_id=str(project_name),
         project_name=str(project_name),
         project_description=str(project_description),
         status=str(status),

@@ -131,11 +131,7 @@ def edit():
     if ((access_permission==False)):
         session.flash = {"msg_type":"error","msg":"Access is Denied !"}
         redirect (URL('default','index'))
-    # if session.status=="" or session.status==None:
-    #     redirect(URL(c='login',f='index'))
 
-    # if session.emp_role in ['management','unit_management']:
-    #     return "Access Denied"
 
     if request.args(0):        
         tasks=db(db.u_tasks.id==request.args(0)).select().first()

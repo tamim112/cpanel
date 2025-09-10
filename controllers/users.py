@@ -251,7 +251,9 @@ def edit():
         session.flash = {"msg_type":"error","msg":"Access is Denied !"}
         redirect (URL('default','index'))
     
-                
+    if request.args(0):
+        user_data=db(db.users.id==request.args(0)).select().first()
+                    
         sql = """
         SELECT * from business_units
         """
