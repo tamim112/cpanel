@@ -213,6 +213,7 @@ def get_data():
     if  request.vars.cid != None and request.vars.cid != '':
         cid = str(request.vars.cid)
         conditions += " and cid = '"+cid+"'"
+
         
     if  request.vars.project_name != None and request.vars.project_name != '':
         project_name = str(request.vars.project_name)

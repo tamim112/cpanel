@@ -264,7 +264,7 @@
             return json.data;
         }
     }, 
-    order: [[3, 'asc']],
+    order: [[1, 'asc']],
     serverSide: true,
     pageLength: 10,
     lengthMenu: [[10,50, 100, 500], [10, 50, 100, 500]],
@@ -275,6 +275,11 @@
         { 
           title:'SBU',
           data: 'cid',
+          class: 'min-w-80px'
+        },
+        { 
+          title:'Project',
+          data: 'pid',
           class: 'min-w-80px'
         },
         {
@@ -300,13 +305,13 @@
           }
         },
         { 
-          title:'LOCATION',
-          data: 'location',
-          class: 'min-w-200px'
-        },
-        { 
           title:'Role',
           data: 'user_role',
+          class: 'min-w-125px'
+        },
+        { 
+          title:'User Type',
+          data: 'user_type',
           class: 'min-w-125px'
         },
         

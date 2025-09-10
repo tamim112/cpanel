@@ -226,6 +226,7 @@
             d.orderDirection = d.order[0].dir
             d.project_name = $("select[name='project_name']").val()
             d.role_id = $("select[name='role_id']").val()
+            d.cid = $("select[name='cid']").val()
         },
         dataSrc: function(json) {
             return json.data;
