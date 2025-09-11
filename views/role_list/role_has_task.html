@@ -26,18 +26,19 @@
 			<form action="{{=URL('role_list','role_has_task_submit')}}" method="post">
 
 			<div class="row">
-				<div class="col-6">
+				<div class="col-4">
 					<div class="mb-10">
-						<label for="cid" class="required form-label">SBU</label>
-						<select class="form-select form-select-solid" name="cid" data-control="select2" data-placeholder="SBU" readonly>
-						<option></option>
-						{{for business_unit in business_units:}}
-							<option value="{{=business_unit['sbu_name']}}" {{if business_unit['sbu_name'] == roles.cid:}} selected {{pass}}>{{=business_unit['sbu_name']}}</option>  
-						{{pass}}
-					</select>
+						<label for="cid" id="cid" class="required form-label">SBU</label>
+						<input type="text" name="cid"  value="{{=roles.cid}}" class="form-control form-control-solid" placeholder="SBU" readonly/>
 					</div>
 				</div>
-				<div class="col-6">
+				<div class="col-4">
+					<div class="mb-10">
+						<label for="pid" id="pid" class="required form-label">Project Name</label>
+						<input type="text" name="pid"  value="{{=roles.pid}}" class="form-control form-control-solid" placeholder="Project Name" readonly/>
+					</div>
+				</div>
+				<div class="col-4">
 					<div class="mb-10">
 						<label for="role_name" id="role_name" class="required form-label">Role Name</label>
 						<input type="text" name="role_name"  value="{{=roles.role_name}}" class="form-control form-control-solid" placeholder="Role Name" readonly/>

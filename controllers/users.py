@@ -37,9 +37,10 @@ def index():
         isSearch = True
     
     conditions = ''
-
-    if session.user_role in ['unit_system_admin','unit_management']:
-        conditions += " and cid = '{}'".format(session.cid)
+    cond=""
+    if session.user_role not in ['system_admin']:
+        conditions += " and pid != 'ams'"
+        cond=" and project_id != 'ams'"
 
     sql = """
     SELECT * from users where 1
@@ -53,13 +54,13 @@ def index():
     business_units = db.executesql(sql, as_dict=True)
     
     sql = """
-    SELECT * from projects
-    """
+    SELECT * from projects where 1
+    """ +cond
     project_lists = db.executesql(sql, as_dict=True)
     
     sql = """
-    SELECT * from u_roles
-    """
+    SELECT * from u_roles where 1
+    """ +conditions
     role_lists = db.executesql(sql, as_dict=True)
     
     return locals()
@@ -73,19 +74,24 @@ def create():
         session.flash = {"msg_type":"error","msg":"Access is Denied !"}
         redirect (URL('default','index'))
     
-    
+    conditions = ''
+    cond=""
+    if session.user_role not in ['system_admin']:
+        conditions += " and pid != 'ams'"
+        cond=" and project_id != 'ams'"
     
     sql = """
     SELECT * from business_units
     """
     business_units = db.executesql(sql, as_dict=True)
     sql = """
-    SELECT * from u_roles
-    """
+    SELECT * from u_roles where 1
+    """ +conditions
     user_roles = db.executesql(sql, as_dict=True)
+    
     sql = """
-    SELECT * from projects
-    """
+    SELECT * from projects where 1
+    """ +cond
     project_lists = db.executesql(sql, as_dict=True)
     
     sql= """
@@ -253,19 +259,25 @@ def edit():
     
     if request.args(0):
         user_data=db(db.users.id==request.args(0)).select().first()
+        
+        conditions = ''
+        cond=""
+        if session.user_role not in ['system_admin']:
+            conditions += " and pid != 'ams'"
+            cond=" and project_id != 'ams'"
                     
         sql = """
         SELECT * from business_units
         """
         business_units = db.executesql(sql, as_dict=True)
         sql = """
-        SELECT * from u_roles
-        """
+        SELECT * from u_roles where 1
+         """ +conditions
         user_roles = db.executesql(sql, as_dict=True)
         
         sql = """
-        SELECT * from projects  
-        """
+        SELECT * from projects where 1
+        """ +cond
         project_lists = db.executesql(sql, as_dict=True)
         
         sql= """

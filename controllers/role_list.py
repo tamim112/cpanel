@@ -10,6 +10,12 @@ def index():
         isSearch = True
     if  request.vars.role_id != None and request.vars.role_id !='':
         isSearch = True
+        
+    conditions = ''
+    cond=""
+    if session.user_role not in ['system_admin']:
+        conditions += " and pid != 'ams'"
+        cond=" and project_id != 'ams'"
     
     sql = """
     SELECT * from business_units 
@@ -17,13 +23,13 @@ def index():
     business_units = db.executesql(sql, as_dict=True) 
     
     sql = """
-    SELECT * from projects
-    """
+    SELECT * from projects where 1
+    """ +cond
     project_lists = db.executesql(sql, as_dict=True)
     
     sql = """
-    SELECT * from u_roles
-    """
+    SELECT * from u_roles where 1
+    """ +conditions
     role_lists = db.executesql(sql, as_dict=True) 
     return locals()
 
@@ -33,6 +39,10 @@ def create():
     if ((access_permission==False)):
         session.flash = {"msg_type":"error","msg":"Access is Denied !"}
         redirect (URL('default','index'))
+    
+    cond=""
+    if session.user_role not in ['system_admin']:
+        cond=" and project_id != 'ams'"
         
     sql = """
     SELECT * from business_units 
@@ -40,8 +50,8 @@ def create():
     business_units = db.executesql(sql, as_dict=True)
     
     sql = """
-    SELECT * from projects
-    """
+    SELECT * from projects where 1
+    """ +cond
     project_lists = db.executesql(sql, as_dict=True)
     
     return locals()
@@ -114,14 +124,22 @@ def edit():
     if request.args(0):        
         roles=db(db.u_roles.id==request.args(0)).select().first()
         
+        if session.user_role not in ['system_admin'] and roles.pid == "ams":
+            session.flash = {"msg_type":"error","msg":"Access is Denied !"}
+            redirect (URL('default','index'))
+            
+        cond=""
+        if session.user_role not in ['system_admin']:
+            cond=" and project_id != 'ams'"
+        
         sql = """
         SELECT * from business_units
         """
         business_units = db.executesql(sql, as_dict=True)
         
         sql = """
-        SELECT * from projects
-        """
+        SELECT * from projects where 1
+        """ + cond
         project_lists = db.executesql(sql, as_dict=True)
         return dict(roles=roles,business_units=business_units, project_lists=project_lists)
 
@@ -225,7 +243,11 @@ def get_data():
         
     if  request.vars.role_id != None and request.vars.role_id !='':
         id = str(request.vars.role_id)
-        conditions = conditions +" and id = '"+id+"'"
+        conditions += " and id = '"+id+"'"
+        
+
+    if session.user_role not in ['system_admin']:
+        conditions += " and pid != 'ams'"
     
         #Search End## 
 
@@ -275,8 +297,17 @@ def role_has_task():
     
     if request.args(0):        
         roles=db(db.u_roles.id==request.args(0)).select().first()
+        conditions = (db.u_tasks.id > 0)  # always true condition
 
-        tasks=db((db.u_tasks.status==1) & (db.u_tasks.pid==roles.pid)).select(orderby=db.u_tasks.task_name)
+        if session.user_role not in ['system_admin'] and roles.pid == "ams":
+            session.flash = {"msg_type":"error","msg":"Access is Denied !"}
+            redirect (URL('default','index'))
+
+        tasks = db(
+            (db.u_tasks.status == 1) &
+            (db.u_tasks.pid == roles.pid)
+        ).select(orderby=db.u_tasks.task_name)
+        
         fin_task_list=[]
         group_list=[]
         for rRow in range(len(tasks)):

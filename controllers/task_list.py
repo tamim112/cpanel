@@ -12,6 +12,12 @@ def index():
         isSearch = True
     if  request.vars.task_id != None and request.vars.task_id !='':
         isSearch = True
+        
+    conditions = ''
+    cond=""
+    if session.user_role not in ['system_admin']:
+        conditions += " and pid != 'ams'"
+        cond=" and project_id != 'ams'"
     
     sql = """
     SELECT * from business_units
@@ -19,18 +25,15 @@ def index():
     business_units = db.executesql(sql, as_dict=True) 
     
     sql = """
-    SELECT * from projects
-    """
+    SELECT * from projects WHERE 1 """ + cond
     project_lists = db.executesql(sql, as_dict=True)
     
     sql = """
-    SELECT * from u_task_group
-    """
+    SELECT * from u_task_group WHERE 1 """ + conditions
     task_groups = db.executesql(sql, as_dict=True) 
     
     sql = """
-    SELECT * from u_tasks
-    """
+    SELECT * from u_tasks WHERE 1 """ + conditions
     task_lists = db.executesql(sql, as_dict=True) 
     return locals()
 
@@ -40,23 +43,25 @@ def create():
     if ((access_permission==False)):
         session.flash = {"msg_type":"error","msg":"Access is Denied !"}
         redirect (URL('default','index'))
-    # if session.status=="" or session.status==None:
-    #     redirect(URL(c='login',f='index'))
-    # if session.emp_role in ['management','unit_management']:
-    #     return "Access Denied"
+
+    conditions = ''
+    cond=""
+    if session.user_role not in ['system_admin']:
+        conditions += " and pid != 'ams'"
+        cond=" and project_id != 'ams'"
+        
     sql = """
     SELECT * from business_units
     """
     business_units = db.executesql(sql, as_dict=True)
     
     sql = """
-    SELECT * from projects
-    """
+    SELECT * from projects WHERE 1 """ + cond 
     project_lists = db.executesql(sql, as_dict=True)
     
     sql = """
-    SELECT * from u_task_group
-    """
+    SELECT * from u_task_group WHERE 1 """ + conditions
+
     task_groups = db.executesql(sql, as_dict=True)
     return locals()
 
@@ -136,19 +141,28 @@ def edit():
     if request.args(0):        
         tasks=db(db.u_tasks.id==request.args(0)).select().first()
         
+        if session.user_role not in ['system_admin'] and tasks.pid == "ams":
+            session.flash = {"msg_type":"error","msg":"Access is Denied !"}
+            redirect (URL('default','index'))
+        
+        conditions = ''
+        cond=""
+        if session.user_role not in ['system_admin']:
+            conditions += " and pid != 'ams'"
+            cond=" and project_id != 'ams'"
+            
         sql = """
         SELECT * from business_units
         """
         business_units = db.executesql(sql, as_dict=True)
         
         sql = """
-        SELECT * from projects 
-        """
+        SELECT * from projects WHERE 1 """ + cond
         project_lists = db.executesql(sql, as_dict=True)
 
         sql = """
-        SELECT * from u_task_group
-        """
+        SELECT * from u_task_group WHERE 1 """ + conditions
+
         task_groups = db.executesql(sql, as_dict=True)
         return dict(tasks=tasks,task_groups=task_groups,business_units=business_units, project_lists=project_lists)
 
@@ -228,11 +242,7 @@ def delete():
     if ((access_permission==False)):
         session.flash = {"msg_type":"error","msg":"Access is Denied !"}
         redirect (URL('default','index'))
-    # if session.status=="" or session.status==None:
-    #     redirect(URL(c='login',f='index'))
 
-    # if session.emp_role in ['management','unit_management','unit_system_admin']:
-    #         return "Access Denied"
     
     if request.args(0):
         role_tasks=db(db.u_role_has_tasks.task_id==request.args(0)).select()
@@ -257,9 +267,7 @@ def get_data():
     if ((access_permission==False)):
         session.flash = {"msg_type":"error","msg":"Access is Denied !"}
         redirect (URL('default','index'))
-    # if session.status=="" or session.status==None:
-    #     redirect(URL(c='login',f='index'))
-        #Search Start##
+
     conditions = ""
     if  request.vars.cid != None and request.vars.cid != '':
         cid = str(request.vars.cid)
@@ -276,6 +284,8 @@ def get_data():
         conditions = conditions +" and id = '"+id+"'"
     
         #Search End## 
+    if session.user_role not in ['system_admin']:
+        conditions += " and pid != 'ams'"
 
     ##Paginate Start##
     total_result = db.executesql("SELECT count(id) as total_row from u_tasks WHERE 1" +conditions, as_dict=True)
