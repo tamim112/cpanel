@@ -278,8 +278,11 @@
                                             <span class="menu-arrow"></span>
                                         </span>
                                         <!--end:Menu link-->
+
                                         <!--begin:Menu sub-->
                                         <div class="menu-sub menu-sub-accordion">  
+
+                                            {{if check_role("user_create")==True or check_role("user_view")==True or check_role("user_delete")==True:}}
                                              <!--begin:Menu item-->
                                              <div class="menu-item">
                                                 <!--begin:Menu link-->
@@ -298,6 +301,10 @@
                                                 <!--end:Menu link-->
                                             </div>
                                             <!--end:Menu item-->
+                                            {{pass}}
+
+
+                                            {{if check_role("role_manage")==True:}}
                                              
                                             <!--begin:Menu item-->
                                             <div class="menu-item">
@@ -317,8 +324,9 @@
                                                 <!--end:Menu link-->
                                             </div>
                                             <!--end:Menu item-->
+                                            {{pass}}
                                            
-
+                                        {{if check_role("task_manage")==True:}}
                                             <!--begin:Menu item-->
                                             <div class="menu-item">
                                                 <!--begin:Menu link-->
@@ -338,6 +346,10 @@
                                             </div>
 
                                             <!--end:Menu item-->
+                                            {{pass}}
+
+
+                                            {{if check_role("task_group_manage")==True:}}
 
                                              <!--begin:Menu item-->
                                              <div class="menu-item">
@@ -352,11 +364,15 @@
                                                         <span class="bullet bullet-dot"></span>
                                                     </span>
                                                     
-                                                    <span class="menu-title">Task Group List</span>
+                                                    <span class="menu-title">Group List</span>
                                                 </a>           
                                                 <!--end:Menu link-->
                                             </div>
                                             <!--end:Menu item-->
+                                            {{pass}}
+
+
+                                            {{if check_role("project_management")==True:}}
                                             <!--begin:Menu item-->
                                              <div class="menu-item">
                                                 <!--begin:Menu link-->
@@ -375,6 +391,11 @@
                                                 <!--end:Menu link-->
                                             </div>
                                             <!--end:Menu item-->
+                                            {{pass}}
+                                            
+                                             <!--begin:Menu item-->
+
+                                            {{if check_role("company_management")==True:}}
                                             <!--begin:Menu item-->
                                              <div class="menu-item">
                                                 <!--begin:Menu link-->
@@ -393,6 +414,7 @@
                                                 <!--end:Menu link-->
                                             </div>
                                             <!--end:Menu item-->
+                                            {{pass}}
 
                                         </div>
                                         <!--end:Menu sub-->
