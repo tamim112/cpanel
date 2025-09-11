@@ -34,13 +34,17 @@ def user_log(task_name,activity):
 #-------------------------------- role access check
 def check_role(task_id):
     t_id=task_id    
-    is_valid_role=False    
-    task_listStr=session.task_listStr
-    for i in range(len(task_listStr)):
-        taskid=task_listStr[i]
-        if taskid==t_id:
-            is_valid_role=True
-            break
-        else:
-            continue    
-    return is_valid_role
+    is_valid_role=False 
+    task_list=[]   
+    task_list=session.task_listStr
+    if session.status=='success':
+        for i in range(len(task_list)):
+            taskid=task_list[i]
+            if taskid==t_id:
+                is_valid_role=True
+                break
+            else:
+                continue    
+        return is_valid_role
+    else:
+        return False

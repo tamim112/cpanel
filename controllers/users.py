@@ -455,7 +455,8 @@ def get_data():
         project_name = request.vars.project_name
         conditions = conditions + " and pid = '"+str(project_name)+"'"
     
-
+    if session.user_role not in ['system_admin']:
+        conditions += " and pid != 'ams'"
 
     #Search End## 
 
