@@ -1,5 +1,5 @@
 def index():
-    task_id='role_management'
+    task_id='role_manage'
     access_permission=check_role(task_id)  
     if ((access_permission==False)):
         session.flash = {"msg_type":"error","msg":"Access is Denied !"}
@@ -28,7 +28,7 @@ def index():
     return locals()
 
 def create():
-    task_id='role_management'
+    task_id='role_manage'
     access_permission=check_role(task_id)  
     if ((access_permission==False)):
         session.flash = {"msg_type":"error","msg":"Access is Denied !"}
@@ -48,7 +48,7 @@ def create():
 
 
 def submit():
-    task_id='role_management'
+    task_id='role_manage'
     access_permission=check_role(task_id)  
     if ((access_permission==False)):
         session.flash = {"msg_type":"error","msg":"Access is Denied !"}
@@ -104,7 +104,7 @@ def submit():
     return  dict(redirect(URL('role_list','index')))
     
 def edit():
-    task_id='role_management'
+    task_id='role_manage'
     access_permission=check_role(task_id)  
     if ((access_permission==False)):
         session.flash = {"msg_type":"error","msg":"Access is Denied !"}
@@ -126,7 +126,7 @@ def edit():
         return dict(roles=roles,business_units=business_units, project_lists=project_lists)
 
 def update():
-    task_id='role_management'
+    task_id='role_manage'
     access_permission=check_role(task_id)  
     if ((access_permission==False)):
         session.flash = {"msg_type":"error","msg":"Access is Denied !"}
@@ -184,7 +184,7 @@ def update():
 
 ## delete start##
 def delete():
-    task_id='role_management'
+    task_id='role_manage'
     access_permission=check_role(task_id)  
     if ((access_permission==False)):
         session.flash = {"msg_type":"error","msg":"Access is Denied !"}
@@ -262,7 +262,7 @@ def get_data():
 
 
 def role_has_task():
-    task_id='role_management'
+    task_id='role_manage'
     access_permission=check_role(task_id)  
     if ((access_permission==False)):
         session.flash = {"msg_type":"error","msg":"Access is Denied !"}
@@ -310,7 +310,7 @@ def role_has_task():
     return locals()
 
 def role_has_task_submit():
-    task_id='role_management'
+    task_id='role_manage'
     access_permission=check_role(task_id)  
     if ((access_permission==False)):
         session.flash = {"msg_type":"error","msg":"Access is Denied !"}

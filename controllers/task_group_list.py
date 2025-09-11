@@ -1,5 +1,5 @@
 def index():
-    task_id='role_management'
+    task_id='task_group_manage'
     access_permission=check_role(task_id)  
     if ((access_permission==False)):
         session.flash = {"msg_type":"error","msg":"Access is Denied !"}
@@ -30,7 +30,7 @@ def index():
     return locals()
 
 def create():
-    task_id='role_management'
+    task_id='task_group_manage'
     access_permission=check_role(task_id) 
     if ((access_permission==False)):
         session.flash = {"msg_type":"error","msg":"Access is Denied !"}
@@ -51,7 +51,7 @@ def create():
     return locals()
 
 def submit():
-    task_id='role_management'
+    task_id='task_group_manage'
     access_permission=check_role(task_id)  
     if ((access_permission==False)):
         session.flash = {"msg_type":"error","msg":"Access is Denied !"}
@@ -108,7 +108,7 @@ def submit():
     return  dict(redirect(URL('task_group_list','index')))
     
 def edit():    
-    task_id='role_management'
+    task_id='task_group_manage'
     access_permission=check_role(task_id)  
     if ((access_permission==False)):
         session.flash = {"msg_type":"error","msg":"Access is Denied !"}
@@ -131,7 +131,7 @@ def edit():
         return dict(task_groups=task_groups,business_units=business_units, project_lists=project_lists)
 
 def update():
-    task_id='role_management'
+    task_id='task_group_manage'
     access_permission=check_role(task_id)  
     if ((access_permission==False)):
         session.flash = {"msg_type":"error","msg":"Access is Denied !"}
@@ -191,7 +191,7 @@ def update():
 
 ## delete start##
 def delete():
-    task_id='role_management'
+    task_id='task_group_manage'
     access_permission=check_role(task_id)  
     if ((access_permission==False)):
         session.flash = {"msg_type":"error","msg":"Access is Denied !"}
@@ -220,7 +220,7 @@ def delete():
 
 
 def get_data():    
-    task_id='role_management'
+    task_id='task_group_manage'
     access_permission=check_role(task_id)  
     if ((access_permission==False)):
         session.flash = {"msg_type":"error","msg":"Access is Denied !"}
