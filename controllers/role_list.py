@@ -208,16 +208,20 @@ def delete():
 def get_data():
     
         
-        #Search Start##
+    #Search Start##
     conditions = ""
+    
+   
+    
+    if  request.vars.project_name != None and request.vars.project_name != '':
+        project_name = str(request.vars.project_name)
+        conditions += " and pid = '"+project_name+"'"
+    
     if  request.vars.cid != None and request.vars.cid != '':
         cid = str(request.vars.cid)
         conditions += " and cid = '"+cid+"'"
 
         
-    if  request.vars.project_name != None and request.vars.project_name != '':
-        project_name = str(request.vars.project_name)
-        conditions += " and pid = '"+project_name+"'"
         
     if  request.vars.role_id != None and request.vars.role_id !='':
         id = str(request.vars.role_id)
@@ -272,7 +276,7 @@ def role_has_task():
     if request.args(0):        
         roles=db(db.u_roles.id==request.args(0)).select().first()
 
-        tasks=db((db.u_tasks.status==1) & (db.u_tasks.cid==roles.cid) & (db.u_tasks.pid==roles.pid)).select(orderby=db.u_tasks.task_name)
+        tasks=db((db.u_tasks.status==1) & (db.u_tasks.pid==roles.pid)).select(orderby=db.u_tasks.task_name)
         fin_task_list=[]
         group_list=[]
         for rRow in range(len(tasks)):

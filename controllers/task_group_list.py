@@ -10,6 +10,7 @@ def index():
         isSearch = True
     if  request.vars.group_id != None and request.vars.group_id !='':
         isSearch = True
+        
     
     sql = """
     SELECT * from business_units

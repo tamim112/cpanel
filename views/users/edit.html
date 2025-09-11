@@ -107,17 +107,30 @@
 						<input type="text" name="last_name" value="{{=user_data.last_name}}" class="form-control form-control-solid" placeholder="Example input"/>
 					</div>
 				</div>
+				<div class="col-6">
+					<div class="mb-10">
+						<label for="username" class="required form-label">Username</label>
+						<input type="text" name="username" class="form-control form-control-solid" placeholder="username"/>
+					</div>
+				</div>	
 
+					
+				<div class="col-6">
+					<div class="mb-10">
+						<label for="password" class="required form-label">Password</label>
+						<input type="password" name="password" class="form-control form-control-solid" placeholder="password"/>
+					</div>
+				</div>
 				<div class="col-6">
 					<div class="mb-10">
 						<label for="exampleFormControlInput1" class="required form-label">Email</label>
 						<input type="email" name="email" value="{{=user_data.email}}" class="form-control form-control-solid" placeholder="Example input"/>
 					</div>
-				</div>		
+				</div>	
 				<div class="col-6">
 					<div class="mb-10">
-						<label for="password" class="required form-label">Password</label>
-						<input type="password" name="password" class="form-control form-control-solid" placeholder="password"/>
+						<label for="mobile" class="required form-label">Mobile</label>
+						<input type="text" name="mobile" value="{{=user_data.mobile}}" class="form-control form-control-solid" placeholder="mobile"/>
 					</div>
 				</div>
 				<div class="col-6">
@@ -133,10 +146,16 @@
 				</div>
 				<div class="col-6">
 					<div class="mb-10">
-						<label for="mobile" class="required form-label">Mobile</label>
-						<input type="text" name="mobile" value="{{=user_data.mobile}}" class="form-control form-control-solid" placeholder="mobile"/>
+						<label for="user_type" class="required form-label">User type</label>
+						<select class="form-select form-select-solid" name="user_type" data-control="select2" id="user_type" data-placeholder="user type">
+						<option></option>
+						{{for types in user_types:}}
+						<option value="{{=types['user_type']}}" {{if str(types['user_type']) == str(user_data.user_type):}} selected {{pass}}>{{=types['user_type']}}</option>  
+						{{pass}}
+						</select>
 					</div>
 				</div>
+				
 				
 				<div class="col-6">
 					<div class="mb-10">
@@ -145,44 +164,13 @@
 					</div>
 				</div>
 
-				
-				
-				
-
-				
 				<div class="col-6">
-					<div class="mb-10 fv-row">
-						<!--begin::Wrapper-->
-						<div class="d-flex flex-stack">
-							<!--begin::Label-->
-							
-							<div class="fw-semibold me-5">
-								<label class="fs-6">Gender</label>
-							</div>
-					
-						
-							<!--begin::Checkboxes-->
-							<div class="d-flex align-items-center">
-								<!--begin::Checkbox-->
-								<label class="form-check form-check-custom form-check-solid me-10">
-									<input class="form-check-input h-20px w-20px" type="radio" name="gender" value="Male" {{if user_data.gender =='Male':}}checked="checked" {{pass}}>
-									<span class="form-check-label fw-semibold">Male</span>
-								</label>
-								<!--end::Checkbox-->
-								<!--begin::Checkbox-->
-								<label class="form-check form-check-custom form-check-solid">
-									<input class="form-check-input h-20px w-20px" type="radio" name="gender" value="Female" {{if user_data.gender =='Female':}}checked="checked" {{pass}}>
-									<span class="form-check-label fw-semibold">Female</span>
-								</label>
-								<!--end::Checkbox-->
-							</div>
-							<!--end::Checkboxes-->
-							<!--end::Label-->
-						
-						</div>
-						<!--end::Wrapper-->
+					<div class="mb-10">
+					<label for="remarks" class="form-label">Remarks</label>
+					<input type="text" name="remarks" class="form-control form-control-solid" value="{{=user_data.note}}" placeholder="remarks"/>
 					</div>
 				</div>
+
 
 				<div class="col-6">
 					<div class="d-flex flex-stack mb-8">
@@ -258,7 +246,12 @@
 {{end}}
 {{block script}}
 <script>
-	$(".kt_datepicker_flat").flatpickr();
+$(document).ready(function(){
+	$('#user_type').select2({
+		placeholder: "Select a user type",
+		tags:true
+	});
+});
 </script>
 
 
