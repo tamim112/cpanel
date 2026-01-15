@@ -17,6 +17,10 @@ def index():
         conditions += " and pid != 'ams'"
         cond=" and project_id != 'ams'"
     
+    if str(session.ams_usertype)=='single_project':
+        cond += " and project_id = '"+str(session.current_project)+"'"
+        conditions += " and pid = '"+str(session.current_project)+"'"
+    
     sql = """
     SELECT * from business_units 
     """
@@ -43,6 +47,9 @@ def create():
     cond=""
     if session.user_role not in ['system_admin']:
         cond=" and project_id != 'ams'"
+        
+    if str(session.ams_usertype)=='single_project':
+        cond += " and project_id = '"+str(session.current_project)+"'"
         
     sql = """
     SELECT * from business_units 
@@ -130,7 +137,10 @@ def edit():
             
         cond=""
         if session.user_role not in ['system_admin']:
-            cond=" and project_id != 'ams'"
+            cond +=" and project_id != 'ams'"
+            
+        if str(session.ams_usertype)=='single_project':
+            cond += " and project_id = '"+str(session.current_project)+"'"
         
         sql = """
         SELECT * from business_units
@@ -229,7 +239,8 @@ def get_data():
     #Search Start##
     conditions = ""
     
-   
+    if str(session.ams_usertype)=='single_project':
+        conditions += " and pid = '"+str(session.current_project)+"'"
     
     if  request.vars.project_name != None and request.vars.project_name != '':
         project_name = str(request.vars.project_name)

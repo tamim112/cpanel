@@ -17,9 +17,12 @@ def index():
     SELECT * from business_units
     """
     business_units = db.executesql(sql, as_dict=True) 
+    conditions = ""
+    if str(session.ams_usertype)=='single_project':
+        conditions += " and project_id = '"+str(session.current_project)+"'"
     
     sql = """
-    SELECT * from projects
+    SELECT * from projects where 1=1 """+conditions+""" ORDER BY id DESC
     """
     project_lists = db.executesql(sql, as_dict=True) 
     return locals()
@@ -193,6 +196,9 @@ def delete():
 def get_data():
 
     conditions = ""
+    if str(session.ams_usertype)=='single_project':
+        conditions += " and project_id = '"+str(session.current_project)+"'"
+    
     if  request.vars.cid != None and request.vars.cid != '':
         cid = str(request.vars.cid)
         conditions += " and cid = '"+cid+"'"

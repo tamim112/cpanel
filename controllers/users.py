@@ -41,6 +41,9 @@ def index():
     if session.user_role not in ['system_admin']:
         conditions += " and pid != 'ams'"
         cond=" and project_id != 'ams'"
+    if str(session.ams_usertype)=='single_project':
+        conditions += " and pid = '"+str(session.current_project)+"'"
+        cond += " and project_id = '"+str(session.current_project)+"'"
 
     sql = """
     SELECT * from users where 1
@@ -79,6 +82,10 @@ def create():
     if session.user_role not in ['system_admin']:
         conditions += " and pid != 'ams'"
         cond=" and project_id != 'ams'"
+    
+    if str(session.ams_usertype)=='single_project':
+        conditions += " and pid = '"+str(session.current_project)+"'"
+        cond += " and project_id = '"+str(session.current_project)+"'"
     
     sql = """
     SELECT * from business_units
@@ -265,7 +272,11 @@ def edit():
         if session.user_role not in ['system_admin']:
             conditions += " and pid != 'ams'"
             cond=" and project_id != 'ams'"
-                    
+        
+        if str(session.ams_usertype)=='single_project':
+            conditions += " and pid = '"+str(session.current_project)+"'"
+            cond += " and project_id = '"+str(session.current_project)+"'"
+            
         sql = """
         SELECT * from business_units
         """
@@ -449,6 +460,9 @@ def delete():
 def get_data():
     #Search Start##
     conditions = ''
+    if str(session.ams_usertype)=='single_project':
+        conditions += " and pid = '"+str(session.current_project)+"'"
+        
     if  request.vars.cid != None and request.vars.cid != '':
         cid = request.vars.cid
         conditions = " and cid = '"+str(cid)+"'" 
@@ -469,6 +483,7 @@ def get_data():
     
     if session.user_role not in ['system_admin']:
         conditions += " and pid != 'ams'"
+        
 
     #Search End## 
 
