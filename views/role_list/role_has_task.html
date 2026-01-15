@@ -4,181 +4,134 @@
 {{function_name='Index'}}
 {{end}}
 {{block content}}
-  <!--begin::Content-->
-  <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
-    <!--begin::Container-->
-    <div class="container-xxl" id="kt_content_container">
-      <!--begin::Card-->
-      <div class="card">
-        <!--begin::Card header-->
-        <!-- <div class="card-header border-0 pt-6">
-        
-          <div class="card-title">
-            
-          </div>
-         
-         
-        </div> -->
-        <!--end::Card header-->
-        <!--begin::Card body-->
-        <div class="card-body mt-2">
-		
-			<form action="{{=URL('role_list','role_has_task_submit')}}" method="post">
+<!--begin::Content-->
+<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+	<div class="container-xxl" id="kt_content_container">
 
-			<div class="row">
-				<div class="col-4">
-					<div class="mb-10">
-						<label for="cid" id="cid" class="required form-label">SBU</label>
-						<input type="text" name="cid"  value="{{=roles.cid}}" class="form-control form-control-solid" placeholder="SBU" readonly/>
-					</div>
-				</div>
-				<div class="col-4">
-					<div class="mb-10">
-						<label for="pid" id="pid" class="required form-label">Project Name</label>
-						<input type="text" name="pid"  value="{{=roles.pid}}" class="form-control form-control-solid" placeholder="Project Name" readonly/>
-					</div>
-				</div>
-				<div class="col-4">
-					<div class="mb-10">
-						<label for="role_name" id="role_name" class="required form-label">Role Name</label>
-						<input type="text" name="role_name"  value="{{=roles.role_name}}" class="form-control form-control-solid" placeholder="Role Name" readonly/>
-						<input type="hidden" name="role_id"  value="{{=roles.id}}"/>
-					</div>
-				</div>
-                <div class="col-12">	
+		<form action="{{=URL('role_list','role_has_task_submit')}}" method="post">
+		<!--begin::Card-->
+		<div class="card role-card">
 
-					<div class="mb-10">
+			<!--begin::Card body-->
+			<div class="card-body py-3 role-page role-scroll">
 
-						<div class="col-md-6 pe-md-10 mb-10 mb-md-0">
-							<!--begin::Title-->
-							<h2 class="text-gray-800 fw-bold mb-4">Task List</h2>
-							<!--end::Title-->
-							<div class="mb-5">
-								<input type="text" id="taskGroupFilter" class="form-control" placeholder="Filter by group or task name..." style="height:40px; border-color:#0d6efd;">
-							</div>
-							<script>
-							document.addEventListener('DOMContentLoaded', function() {
-								const filterInput = document.getElementById('taskGroupFilter');
-								filterInput.addEventListener('input', function() {
-									const filter = this.value.toLowerCase();
-									document.querySelectorAll('.m-0').forEach(function(section) {
-										const groupTitle = section.querySelector('h4').textContent.toLowerCase();
-										let match = groupTitle.includes(filter);
-										let anyTaskMatch = false;
-										section.querySelectorAll('.form-check-label').forEach(function(label) {
-											if (label.textContent.toLowerCase().includes(filter)) {
-												match = true;
-												anyTaskMatch = true;
-											}
-										});
-										section.style.display = match ? '' : 'none';
-										// Highlight matched group title
-										const h4 = section.querySelector('h4');
-										if (filter && groupTitle.includes(filter)) {
-											h4.style.backgroundColor = '#45818e';
-										} else {
-											h4.style.backgroundColor = '';
-										}
-										// Highlight matched tasks
-										section.querySelectorAll('.form-check-label').forEach(function(label) {
-											if (filter && label.textContent.toLowerCase().includes(filter)) {
-												label.style.backgroundColor = '#45818e';
-											} else {
-												label.style.backgroundColor = '';
-											}
-										});
-										// Expand/collapse group based on match
-										const collapseDiv = section.querySelector('.collapse');
-										if (match && collapseDiv) {
-											collapseDiv.classList.add('show');
-										} else if (collapseDiv) {
-											collapseDiv.classList.remove('show');
-										}
-									});
-								});
-							});
-							</script>
-							<!--begin::Accordion-->
-							{{for groups in fin_task_list:}}
-							{{views=''
-								tgl='collapsed'
-								for task in groups['task_list']:
-									if str(task['task_id']) in role_task_list:
-										views='show'
-										tgl='active'
-										break
-								pass}}
-							<!--begin::Section-->
-							<div class="m-0">
-								<!--begin::Heading-->
-								<div class="d-flex align-items-center collapsible py-3 toggle mb-0 {{=tgl}}" data-bs-toggle="collapse" data-bs-target="#{{=str(groups['group_name']).replace(' ','_')}}" aria-expanded="false">
-									<!--begin::Icon-->
-									<div class="btn btn-sm btn-icon mw-20px btn-active-color-primary me-5">
-										<!--begin::Svg Icon | path: icons/duotune/general/gen036.svg-->
-										<span class="svg-icon toggle-on svg-icon-primary svg-icon-1">
-											<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-												<rect opacity="0.3" x="2" y="2" width="20" height="20" rx="5" fill="currentColor"></rect>
-												<rect x="6.0104" y="10.9247" width="12" height="2" rx="1" fill="currentColor"></rect>
-											</svg>
-										</span>
-										<!--end::Svg Icon-->
-										<!--begin::Svg Icon | path: icons/duotune/general/gen035.svg-->
-										<span class="svg-icon toggle-off svg-icon-1">
-											<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-												<rect opacity="0.3" x="2" y="2" width="20" height="20" rx="5" fill="currentColor"></rect>
-												<rect x="10.8891" y="17.8033" width="12" height="2" rx="1" transform="rotate(-90 10.8891 17.8033)" fill="currentColor"></rect>
-												<rect x="6.01041" y="10.9247" width="12" height="2" rx="1" fill="currentColor"></rect>
-											</svg>
-										</span>
-										<!--end::Svg Icon-->
-									</div>
-									<!--end::Icon-->
-									<!--begin::Title-->
-									<h4 class="text-gray-700 fw-bold cursor-pointer mb-0">{{=str(groups['group_name'])}}</h4>
-									<!--end::Title-->
-								</div>
-								<!--end::Heading-->
-								
-								<!--begin::Body-->
-								<div id="{{=str(groups['group_name']).replace(' ','_')}}" class="fs-6 ms-1 collapse {{=views}}" style="">
-									<!--begin::Text-->
-									<div class="mb-4 text-gray-600 fw-semibold fs-6 ps-10">
-											{{for task in groups['task_list']:}}
-											<div class="form-check form-check-custom form-check-solid form-check-sm mb-4">
-												<input class="form-check-input" type="checkbox" value="{{=task['task_id']}}||{{=task['task_name']}}" id="flexRadioLg" name="task_ids[]" {{if str(task['task_id']) in role_task_list:}} checked {{pass}}/>
-												<label class="form-check-label" for="flexRadioLg">
-													{{=str(task['task_name'])}}
-												</label>
-											</div>
-											{{pass}}								
-									</div>
-										<!--end::Text-->
-								</div>
-								<!--end::Content-->
-								<!--begin::Separator-->
-								<div class="separator separator-dashed"></div>
-								<!--end::Separator-->
-							</div>
-							<!--end::Section-->
-							{{pass}}
-							
-							<!--end::Accordion-->
+
+					<!-- =========================
+               ROLE INFO (TOP BAR)
+          ========================== -->
+					<div class="row g-3 mb-3">
+
+						<div class="col-md-3">
+							<label class="form-label fs-7 fw-semibold text-gray-600 mb-1">SBU</label>
+							<input type="text" class="form-control form-control-sm form-control-solid" name="cid"
+								value="{{=roles.cid}}" readonly>
+						</div>
+
+						<div class="col-md-4">
+							<label class="form-label fs-7 fw-semibold text-gray-600 mb-1">Project</label>
+							<input type="text" class="form-control form-control-sm form-control-solid"  name="pid" 
+								value="{{=roles.pid}}" readonly>
+						</div>
+
+						<div class="col-md-5">
+							<label class="form-label fs-7 fw-semibold text-gray-600 mb-1">Role</label>
+							<input type="text" class="form-control form-control-sm form-control-solid"  name="role_name" 
+								value="{{=roles.role_name}}" readonly>
+							<input type="hidden" name="role_id" value="{{=roles.id}}">
 						</div>
 
 					</div>
-						
-				</div>
+
+					<!-- =========================
+               HEADER
+          ========================== -->
+					<div class="d-flex justify-content-between align-items-center my-6 flex-wrap">
+
+						<span class="fw-bold text-gray-800 fs-6 me-3">Task Permissions</span>
+
+						<div class="d-flex align-items-center gap-2 flex-wrap">
+
+							<!-- Search input -->
+							<input type="text" id="taskGroupFilter"
+								class="form-control form-control-sm"
+								placeholder="Filter by group or task..."
+								style="width:200px; height:32px;">
+
+							<!-- Select all -->
+							<div class="form-check form-check-sm ms-2">
+							<input class="form-check-input form-check-input-sm" type="checkbox" id="checkAllTasks">
+							<label class="form-check-label fw-bold ms-0" for="checkAllTasks">Select All</label>
+							</div>
+
+						</div>
+
+						</div>
+
+
+					<!-- =========================
+               TASK GRID (4–4–4)
+          ========================== -->
+					<div class="row g-3">
+
+						{{for groups in fin_task_list:}}
+						<div class="col-md-4">
+
+							<div class="task-group-box compact">
+
+								<!-- Group Header -->
+								<div class="group-header form-check form-check-sm">
+									<span class="group-title">
+										{{=groups['group_name']}}
+									</span>
+
+									<input class="form-check-input form-check-input-sm group-check" type="checkbox"
+										data-group="{{=groups['group_name'].replace(' ','_')}}" id="checkgrpTasks">
+								</div>
+
+								<!-- Tasks -->
+								<table class="table table-sm task-table mb-0">
+									<tbody>
+
+										{{for task in groups['task_list']:}}
+										<tr class="task-row clickable" onclick="toggleTaskCheckbox(this)">
+
+											<td class="task-check pe-0 me-0">
+												<div class="form-check form-check-sm">
+													<input class="form-check-input form-check-input-sm task-checkbox group-{{=groups['group_name'].replace(' ','_')}}" type="checkbox" name="task_ids[]"
+														value="{{=task['task_id']}}||{{=task['task_name']}}" {{if str(task['task_id']) in role_task_list:}}checked{{pass}}>
+												</div>
+											</td>
+
+											<td class="task-name">
+												{{=task['task_name']}}
+											</td>
+
+										</tr>
+										{{pass}}
+
+									</tbody>
+								</table>
+
+
+							</div>
+
+						</div>
+
+						{{pass}}
+
+					</div>
+
 				
-            </div>
-				  
-			<div class="row">
-				<div class="col">
-					<div class="card-toolbar">
-						<!--begin::Toolbar-->
-						<div class="d-flex justify-content-start" data-kt-user-table-toolbar="base">
-					
-					
-							<!--begin::Add user-->
+
+			</div>
+			<!--end::Card body-->
+
+			<!-- =========================
+           STICKY ACTION BAR
+      ========================== -->
+			<div class="role-action-bar">
+				<div class="d-flex justify-content-end gap-3 px-4">
+					<!--begin::Add user-->
 							<button type="submit" class="btn btn-primary me-3">
 				
 								<span class="svg-icon svg-icon-2">
@@ -204,35 +157,201 @@
 									Back
 							</a>
 								<!--end::Svg Icon-->
-								<!--end::Export-->
-							<!--end::Add user-->
-					</div>
-					<!--end::Toolbar-->
-			
-				
-				</div>
 				</div>
 			</div>
-			</form>
-       
-        </div>
-        <!--end::Card body-->
-      </div>
-      <!--end::Card-->
-    </div>
-    <!--end::Container-->
-  </div>
-  <!--end::Content-->
+		</div>
+	</form>
+		<!--end::Card-->
+
+	</div>
+</div>
+<!--end::Content-->
+
+<!-- =========================
+     STYLES
+========================== -->
+<style>
+	/* Card height control */
+	.role-card {
+		height: calc(100vh - 120px);
+		display: flex;
+		flex-direction: column;
+	}
+
+	/* Scroll only card body */
+	.role-scroll {
+		flex: 1;
+		overflow-y: auto;
+		padding-bottom: 16px;
+	}
+
+	/* Task group */
+	.task-group-box {
+		border: 1px solid #e4e6ef;
+		border-radius: 6px;
+		padding: 10px;
+		background: #f9fafb;
+	}
+
+	.task-row:hover {
+		background: #f1f5f9;
+	}
+
+	/* Sticky bottom bar */
+	.role-action-bar {
+		border-top: 1px solid #e4e6ef;
+		background: #fff;
+		padding: 10px 0;
+	}
+
+	/* Compact group box */
+	.task-group-box.compact {
+		border: 1px solid #e4e6ef;
+		border-radius: 6px;
+		padding: 8px 10px;
+		background: #f9fafb;
+	}
+
+	/* Header */
+	.group-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding-bottom: 4px;
+		margin-bottom: 6px;
+		border-bottom: 1px dashed #e5e7eb;
+	}
+
+	/* Group title */
+	.group-title {
+		font-size: 11px;
+		font-weight: 600;
+		color: #374151;
+		text-transform: uppercase;
+		letter-spacing: .3px;
+	}
+
+	/* Task table */
+	.task-table td {
+		vertical-align: middle;
+	}
+
+	/* Checkbox column */
+	.task-check {
+		width: 25px;
+	}
+
+	/* Task text */
+	.task-name {
+		font-size: 12px;
+		color: #4b5563;
+		padding-left: 4px;
+	}
+
+	/* Hover effect */
+	.task-row:hover {
+		background-color: #d5e0eb;
+	}
+
+	/* Smaller checkbox */
+	.form-check-input-sm {
+		width: 18px;
+		height: 18px;
+		margin-top: 0px;
+	}
+
+	/* Cursor + hover */
+	.task-row.clickable {
+		cursor: pointer;
+	}
+
+	.task-row.clickable:hover {
+		background-color: #eef2ff;
+	}
+
+	/* Prevent double toggle when clicking checkbox itself */
+	.task-row.clickable input {
+		pointer-events: none;
+	}
+</style>
+
+
+
 {{end}}
+
 
 {{block script}}
+
+
+<!-- =========================
+     CHECK ALL SCRIPT
+========================== -->
 <script>
-	$(".kt_datepicker_flat").flatpickr();
+	document.addEventListener('DOMContentLoaded', function () {
+
+		// Global select all
+		document.getElementById('checkAllTasks').addEventListener('change', function () {
+			document.querySelectorAll('.task-checkbox, .group-check')
+				.forEach(cb => cb.checked = this.checked);
+		});
+
+		// Group select
+		document.querySelectorAll('.group-check').forEach(groupCheck => {
+			groupCheck.addEventListener('change', function () {
+				document.querySelectorAll('.group-' + this.dataset.group)
+					.forEach(cb => cb.checked = this.checked);
+			});
+		});
+
+	});
+
+
+	function toggleTaskCheckbox(row) {
+		const checkbox = row.querySelector('input[type="checkbox"]');
+		checkbox.checked = !checkbox.checked;
+	}
 </script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  const filterInput = document.getElementById('taskGroupFilter');
+
+  filterInput.addEventListener('input', function () {
+    const filter = this.value.toLowerCase();
+
+    document.querySelectorAll('.task-group-box').forEach(function(groupBox) {
+      const groupName = groupBox.querySelector('.group-title').textContent.toLowerCase();
+      let matchGroup = groupName.includes(filter);
+      let matchTask = false;
+
+      // check tasks in this group
+      groupBox.querySelectorAll('.task-row').forEach(function(taskRow) {
+        const taskName = taskRow.querySelector('.task-name').textContent.toLowerCase();
+
+        if(matchGroup) {
+          // if group matches, show all tasks
+          taskRow.style.display = '';
+          matchTask = true;
+        } else if(taskName.includes(filter)) {
+          // if task matches, show it
+          taskRow.style.display = '';
+          matchTask = true;
+        } else {
+          // task does not match
+          taskRow.style.display = 'none';
+        }
+      });
+
+      // show/hide group based on match
+      groupBox.style.display = (matchGroup || matchTask) ? '' : 'none';
+    });
+
+  });
+
+});
+</script>
+
+
+
 {{end}}
-
-
-
-
-
