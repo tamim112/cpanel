@@ -1,0 +1,250 @@
+{{extend 'layout.html'}}
+
+
+{{block content}}
+  <!--begin::Content-->
+  <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+    <!--begin::Container-->
+    <div class="container-xxl" id="kt_content_container">
+      <!--begin::Card-->
+      <div class="card">
+        <!--begin::Card header-->
+        <!-- <div class="card-header border-0 pt-6">
+        
+          <div class="card-title">
+            
+          </div>
+         
+         
+        </div> -->
+        <!--end::Card header-->
+        <!--begin::Card body-->
+        <div class="card-body mt-2">
+		
+			<form action="{{=URL('task_list','bulk_task')}}" method="post">
+
+			<div class="row">
+				<div class="col-6">
+					<div class="mb-10">
+						<label for="cid" class="required form-label">SBU</label>
+						<select class="form-select form-select-solid" name="cid" data-control="select2" data-placeholder="SBU">
+						<option></option>
+						{{for business_unit in business_units:}}
+							<option value="{{=business_unit['sbu_name']}}">{{=business_unit['sbu_name']}}</option>  
+						{{pass}}
+					</select>
+					</div>
+				</div>
+				<div class="col-6">
+					<div class="mb-10">
+						<label for="project" class="required form-label">Project</label>
+						<select class="form-select form-select-solid" name="project_name" data-control="select2" data-placeholder="Project">
+						<option></option>
+						{{for project in project_lists:}}
+							<option value="{{=project['project_name']}}"  >{{=project['project_name']}}</option>  
+						{{pass}}
+					</select>
+					</div>
+				</div>
+				<div class="col-md-12">
+					<div class="table-responsive pt-2">
+						<table class="table align-middle table-row-dashed fs-6 gy-5" >
+							<thead>
+							<tr>
+								<th class="min-w-50px fw-bold">SL.</th>
+								<th class="min-w-250px fw-bold">Group Name<span class="required form-label"></span></th>
+								
+								<th class="min-w-300px fw-bold">Task Name</th>
+								<th class="min-w-300px fw-bold">Description</th>
+								<th class="min-w-80px"></th>
+							</tr>
+							</thead>
+							<tbody class="" id="dynamic_field">
+								<tr>
+									<td class='fw-bold'>1</td>
+									<td>
+										<select class="form-select form-select-solid" name="group_id" data-control="select2" data-placeholder="Group Name">
+										<option></option>
+										{{for group in task_groups:}}
+											<option value="{{=group['id']}}||{{=group['group_name']}}">{{=group['group_name']}}</option>  
+										{{pass}}
+										</select>  	                                                          
+									</td>
+									<td>
+										<input type="text" name="task_name" class="form-control form-control-solid" placeholder="Task Name"/>
+									</td>
+									<td>
+										<textarea class="form-control form-control form-control-solid" name="task_description" data-kt-autosize="true" value="" rows="1"></textarea>
+									</td>
+									
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="form-group d-flex justify-content-end mt-4"> 
+						<a href="javascript:;"  class="btn btn-light-primary list_add mb-10">
+							<span class="svg-icon svg-icon-2">
+								<svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<rect opacity="0.5" x="11.364" y="20.364" width="16" height="2" rx="1" transform="rotate(-90 11.364 20.364)" fill="currentColor"></rect>
+								<rect x="4.36396" y="11.364" width="16" height="2" rx="1" fill="currentColor"></rect>
+								</svg>
+							</span>
+							Add
+						</a>
+					</div>  
+				</div>
+	
+            </div>
+			<div class="row">
+				<div class="col">
+					<div class="card-toolbar">
+						<!--begin::Toolbar-->
+						<div class="d-flex justify-content-start" data-kt-user-table-toolbar="base">					
+					
+							<!--begin::Add user-->
+							<button type="submit" id="submitTasks" class="btn btn-primary me-3">
+				
+								<span class="svg-icon svg-icon-2">
+									<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+										<path opacity="0.3" d="M10 4H21C21.6 4 22 4.4 22 5V7H10V4Z" fill="currentColor"/>
+										<path d="M10.4 3.60001L12 6H21C21.6 6 22 6.4 22 7V19C22 19.6 21.6 20 21 20H3C2.4 20 2 19.6 2 19V4C2 3.4 2.4 3 3 3H9.20001C9.70001 3 10.2 3.20001 10.4 3.60001ZM16 11.6L12.7 8.29999C12.3 7.89999 11.7 7.89999 11.3 8.29999L8 11.6H11V17C11 17.6 11.4 18 12 18C12.6 18 13 17.6 13 17V11.6H16Z" fill="currentColor"/>
+										<path opacity="0.3" d="M11 11.6V17C11 17.6 11.4 18 12 18C12.6 18 13 17.6 13 17V11.6H11Z" fill="currentColor"/>
+									</svg>
+								</span>
+								Submit
+							</button>
+					
+
+							<!--begin::Export-->
+							<a href="{{=URL('task_list','index')}}" class="btn btn-light-primary">
+									<!--begin::Svg Icon | path: icons/duotune/arrows/arr078.svg-->
+									<span class="svg-icon svg-icon-2">
+										<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+											<rect opacity="0.5" x="6" y="11" width="13" height="2" rx="1" fill="currentColor"/>
+											<path d="M8.56569 11.4343L12.75 7.25C13.1642 6.83579 13.1642 6.16421 12.75 5.75C12.3358 5.33579 11.6642 5.33579 11.25 5.75L5.70711 11.2929C5.31658 11.6834 5.31658 12.3166 5.70711 12.7071L11.25 18.25C11.6642 18.6642 12.3358 18.6642 12.75 18.25C13.1642 17.8358 13.1642 17.1642 12.75 16.75L8.56569 12.5657C8.25327 12.2533 8.25327 11.7467 8.56569 11.4343Z" fill="currentColor"/>
+										</svg>
+									</span>
+									Cancel
+							</a>
+								<!--end::Svg Icon-->
+								<!--end::Export-->
+							<!--end::Add user-->
+					</div>
+					<!--end::Toolbar-->
+			
+				
+				</div>
+				</div>
+			</div>
+			</form>
+       
+        </div>
+        <!--end::Card body-->
+      </div>
+      <!--end::Card-->
+    </div>
+    <!--end::Container-->
+  </div>
+  <!--end::Content-->
+{{end}}
+
+{{block script}}
+<script>
+	function addRowCount(tableAttr) {
+        var i=0
+        $(tableAttr).each(function(){
+            $('td:first-child', this).each(function(i){
+            $(this).html(i+1);
+            });
+        });
+    }
+	 $(".list_add").click(function() {
+        $("#dynamic_field").append(`
+        <tr>
+            <td class='fw-bold'></td>
+            <td>
+				<select class="form-select form-select-solid selectChange" name="group_id" data-control="select2" data-placeholder="Group Name">
+				<option></option>
+				{{for group in task_groups:}}
+					<option value="{{=group['id']}}||{{=group['group_name']}}">{{=group['group_name']}}</option>  
+				{{pass}}
+				</select>  	                                                          
+			</td>
+			<td>
+				<input type="text" name="task_name" class="form-control form-control-solid" placeholder="Task Name"/>
+			</td>
+			<td>
+				<textarea class="form-control form-control form-control-solid" name="task_description" data-kt-autosize="true" value="" rows="1"></textarea>
+			</td>
+			
+            <td class="list_delete">
+                <a href="javascript:;" class="btn btn-sm btn-light-danger min-w-80px">
+                    <span class="svg-icon svg-icon-1">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5 9C5 8.44772 5.44772 8 6 8H18C18.5523 8 19 8.44772 19 9V18C19 19.6569 17.6569 21 16 21H8C6.34315 21 5 19.6569 5 18V9Z" fill="currentColor"></path>
+                            <path opacity="0.5" d="M5 5C5 4.44772 5.44772 4 6 4H18C18.5523 4 19 4.44772 19 5V5C19 5.55228 18.5523 6 18 6H6C5.44772 6 5 5.55228 5 5V5Z" fill="currentColor"></path>
+                            <path opacity="0.5" d="M9 4C9 3.44772 9.44772 3 10 3H14C14.5523 3 15 3.44772 15 4V4H9V4Z" fill="currentColor"></path>
+                        </svg>
+                    </span>
+                </a>
+            </td>
+        </tr>
+        `); 
+            
+        addRowCount('.table');
+        
+        $(".selectChange").each(function() {
+            $(this).select2();
+        });
+    });
+
+    $("#dynamic_field").on("click", ".list_delete", function() {
+        $(this).parent('tr').remove();
+    })    
+    
+</script>
+
+<script>
+$("#submitTasks").on("click", function () {
+
+    let form = $("form");
+    let btn = $(this);
+
+    btn.prop("disabled", true);
+
+    $.ajax({
+        url: form.attr("action"),
+        type: "POST",
+        data: form.serialize(),
+        dataType: "json",
+        success: function (data) {
+
+            if (data.status === "success") {
+
+                toastr.success(data.message || "Tasks added successfully");
+
+                // allow toast to render properly
+                setTimeout(() => {
+                    window.location.href = "{{=URL('task_list','index')}}";
+                }, 1500);
+
+            } else {
+                toastr.error(data.message || "Something went wrong");
+                btn.prop("disabled", false);
+            }
+        },
+        error: function () {
+            toastr.error("Server error 💀");
+            btn.prop("disabled", false);
+        }
+    });
+});
+
+</script>
+
+{{end}}
+
+
+
+
+

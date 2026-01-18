@@ -339,3 +339,133 @@ def get_data():
 
 
 
+def utility():
+    task_id='task_manage'
+    access_permission=check_role(task_id)  
+    if ((access_permission==False)):
+        session.flash = {"msg_type":"error","msg":"Access is Denied !"}
+        redirect (URL('default','index'))
+
+    conditions = ''
+    cond=""
+    if session.user_role not in ['system_admin']:
+        conditions += " and pid != 'ams'"
+        cond=" and project_id != 'ams'"
+    
+    if str(session.ams_usertype)=='single_project':
+        conditions += " and pid = '"+str(session.current_project)+"'"
+        cond += " and project_id = '"+str(session.current_project)+"'"
+        
+    sql = """
+    SELECT * from business_units
+    """
+    business_units = db.executesql(sql, as_dict=True)
+    
+    sql = """
+    SELECT * from projects WHERE 1 """ + cond 
+    project_lists = db.executesql(sql, as_dict=True)
+    
+    sql = """
+    SELECT * from u_task_group WHERE 1 """ + conditions
+
+    task_groups = db.executesql(sql, as_dict=True)
+    return locals()
+
+def normalize_to_list(val):
+    if not val:
+        return []
+
+    # already a list (JS / multiple rows)
+    if isinstance(val, (list, tuple)):
+        return [str(v).strip() for v in val if str(v).strip()]
+
+    # single value
+    return [str(val).strip()]
+
+def json_error(msg):
+    return response.json({
+        "status": "error",
+        "message": msg
+    })
+
+def json_success(msg):
+    return response.json({
+        "status": "success",
+        "message": msg
+    })
+
+
+
+def bulk_task():
+    task_id = 'task_manage'
+    access_permission = check_role(task_id)
+
+    if not access_permission:
+        return json_error("Access is Denied!")
+
+    if not request.vars.cid:
+        return json_error("Invalid request")
+
+    cid = request.vars.cid
+    project_name = request.vars.project_name
+    group_id = request.vars.group_id
+    task_name = request.vars.task_name
+    task_description = request.vars.task_description
+
+    group_list = normalize_to_list(group_id)
+    task_names_list = normalize_to_list(task_name)
+    task_description_list = normalize_to_list(task_description)
+
+    errors = []
+    if not cid:
+        errors.append("SBU is required")
+    if not project_name:
+        errors.append("Project Name is required")
+    if not group_list:
+        errors.append("Group Name is required")
+    if not task_names_list:
+        errors.append("Task Name is required")
+
+    if errors:
+        return json_error(" | ".join(errors))
+
+    task_list_added = []
+    error_tasks = []
+
+    for i in range(len(task_names_list)):
+        t_name = str(task_names_list[i]).strip().lower().replace(" ", "_")
+        t_desc = task_description_list[i] if i < len(task_description_list) else ""
+
+        grp = str(group_list[i]).split("||") if i < len(group_list) else ["", ""]
+        gid, gname = grp[0], grp[1]
+
+        exists = db(
+            (db.u_tasks.task_name == t_name) &
+            (db.u_tasks.cid == cid) &
+            (db.u_tasks.pid == project_name)
+        ).count()
+
+        if exists:
+            error_tasks.append(t_name)
+        else:
+            task_list_added.append({
+                "cid": cid,
+                "pid": project_name,
+                "task_name": t_name,
+                "task_description": t_desc,
+                "group_id": gid,
+                "group_name": gname,
+                "status": "1",
+            })
+
+    if error_tasks:
+        return json_error("Task already exists: " + ", ".join(error_tasks))
+
+    if task_list_added:
+        db.u_tasks.bulk_insert(task_list_added)
+
+    return json_success("Task List Added Successfully 🔥")
+
+
+
+
