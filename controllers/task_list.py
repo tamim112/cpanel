@@ -464,7 +464,7 @@ def bulk_task():
     if task_list_added:
         db.u_tasks.bulk_insert(task_list_added)
 
-    return json_success("Task List Added Successfully 🔥")
+    return json_success("Task List Added Successfully")
 
 
 
